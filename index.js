@@ -13,6 +13,25 @@ app.get('/', (req, res) => {
     res.send('Hello from code')
 })
 
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await Product.find({})
+        res.send(products)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
+app.get('/api/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        console.log(id);
+        const product = await Product.findById(id)
+        res.send(product)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
+
 app.post('/api/product', async (req, res) => {
     try {
         const product = await Product.create(req.body)
@@ -25,9 +44,14 @@ app.post('/api/product', async (req, res) => {
 mongoose.connect(process.env.MONGO_CONNECTION_URI).then(() => {
     console.log('connent to the database');
 
-    app.listen(3000, () => {
-        console.log('app running successfully on port 3000');
-    })
+    try {
+        app.listen(8000, () => {
+            console.log('app running successfully on port 8000');
+        })
+
+    } catch (error) {
+        console.log('port running failed:::: ', error);
+    }
 }).catch((err) => {
     console.log('mongo db connection failed::: ', err);
 })
